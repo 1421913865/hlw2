@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        <context:component-scan base-package="pojo,service"></context:component-scan>
+        <!--Spring 整合Mybatis-->
+        <!-- 配置数据库属性 -->
+        <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+                <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://localhost:3306/hlwblog"></property>
+                <property name="username" value="root"></property>
+                <property name="password" value="123456"></property>
+        </bean>
+        <!-- 创建SqlSessionFactory对象 -->
+        <bean id="sqlSessionfactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+                <property name="dataSource" ref="dataSource"></property>
+
+        </bean>
+        <!--扫描dao层所有得类-->
+        <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+                <property name="basePackage" value="dao"></property>
+        </bean>
+        <!--spring框架声明事务配置-->
+        <!-- 事务管理 -->
+        <bean id="txManage" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+                <property name="dataSource" ref="dataSource"></property>
+        </bean>
+        <!-- 声明事务 -->
+        <tx:advice id="txAdvice" transaction-manager="txManage">
+                <tx:attributes>
+                        <tx:method name="find*" read-only="true"/>
+                        <tx:method name="*" isolation="DEFAULT"/>
+                </tx:attributes>
+        </tx:advice>
+        <!-- 配置aop -->
+        <aop:config>
+                <aop:advisor advice-ref="txAdvice" pointcut="execution(* service.Impl.*.*(..))"/>
+
+        </aop:config>
+</beans>
