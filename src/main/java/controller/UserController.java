@@ -128,7 +128,7 @@ public class UserController {
             user.setUserimage("huge2.jpeg");
         }
         System.out.println("login:  "+uname);
-        request.setAttribute("user",user);
+        request.getSession().setAttribute("user",user);
         return "main";
     }
     @RequestMapping(value = "checkexit",method = RequestMethod.POST)
