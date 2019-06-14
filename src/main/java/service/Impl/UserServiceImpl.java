@@ -39,4 +39,14 @@ public class UserServiceImpl implements UserService {
         System.out.println("修改用户信息");
         userDao.updateuserinfo(user);
     }
+
+    @Override
+    public User findByUid(int uid) {
+        return userDao.findByUid(uid);
+    }
+
+    @Override
+    public List<User> queryUnameList2(String uname, int size) {
+        return userDao.queryUnameList2(uname,size);
+    }
 }

@@ -16,6 +16,8 @@ public interface UserDao {
     public List<User> findall();
     @Select("select * from user where uname=#{0}")
     public User ckeckexit(String uname);
+    @Select("select * from user where uid=#{0}")
+    public User findByUid(int uid);
     @Select("select * from user where uname=#{uname} and upassword=#{upassword}")
     public User ckeckpasswordexit(@Param("uname") String uname, @Param("upassword")String upassword);
     @Insert("insert into user(uname,upassword,uimage,userimage,userprofile) values(#{uname},#{upassword},#{uimage},#{userimage},#{userprofile})")
@@ -23,4 +25,6 @@ public interface UserDao {
     @Update("update user SET upassword=#{upassword},uimage=#{uimage},userimage=#{userimage}," +
             "userprofile=#{userprofile} where uname=#{uname}")
     public void updateuserinfo(User user);
+    @Select("SELECT * FROM user WHERE uname LIKE CONCAT('%', #{uname}, '%') limit #{size}")
+    public List<User> queryUnameList2(@Param("uname") String uname,@Param("size") int size);
  }

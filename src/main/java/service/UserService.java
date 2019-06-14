@@ -13,4 +13,6 @@ public interface UserService {
     public User ckeckexit(String uname);
     public User ckeckpasswordexit(String uname,String upassword);
     public void updateuserinfo(User user);
+    public User findByUid(int uid);
+    public List<User> queryUnameList2( String uname,int size);
 }

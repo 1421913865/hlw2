@@ -5,25 +5,28 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pojo.Article;
 import pojo.User;
+import service.ArticleService;
 import service.UserService;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URLDecoder;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private ArticleService articleService;
     @RequestMapping("/findall")
     public String findAll(Model model){
         System.out.println("表现层显示所有用户controller");
@@ -116,9 +119,66 @@ public class UserController {
         map.put("aa",1);
         return map;
     }
+    private String contentAlert(String str){
+        String tagS[] = {"<h1","<h2","<h3","<h4","<h5"};
+        String tagE[] = {"</h1>","</h2>","</h3>","</h4>","</h5>"};
+        int i = 0;
+        for(;i < tagS.length;i++){
+            int indexS = str.indexOf(tagS[i]);
+            if(indexS == 0){
+                int indexE = str.indexOf(tagE[i]);
+                str = str.substring(0, indexE+5);
+                break;
+            }
+        }
+        if(i == tagS.length){
+            int idx = str.indexOf("</p>");
+            str = str.substring(0, idx+4);
+        }
+        String newstr = "";
+        newstr = str.replaceAll("<[.[^>]]*>","");
+        newstr = newstr.replaceAll(" ", "");
+        if(newstr.length() == 0){
+            newstr="亲，点击文章阅读详细信息...";
+        }
+        return newstr;
+    }
 
+    @RequestMapping("/nologin")
+    public String nologin( HttpServletRequest request){
+
+        List<Article> tuijian=articleService.findRecommend();
+        System.out.println(tuijian);
+        int count1=1;
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        for (Article a:tuijian
+                ) {
+            User user1=userService.findByUid(a.getUid());
+            String content = contentAlert(a.getArcontent());
+            a.setArcontent(content);
+            System.out.println(a);
+            System.out.println(user1);
+            String date=simpleDateFormat.format(a.getArcreatetime());
+            request.getSession().setAttribute(("RecommendDate"+count1),date);
+            request.getSession().setAttribute(("RecommendArticle"+count1),a);
+            request.getSession().setAttribute(("RecommendUser"+count1),user1);
+            count1++;
+        }
+        List<Article> top3=articleService.findtop3();
+
+        int count=1;
+        for (Article a:top3
+                ) {
+            User user1=userService.findByUid(a.getUid());
+            System.out.println(user1);
+            request.getSession().setAttribute(("top"+count),user1);
+            count++;
+        }
+        return "main";
+    }
     @RequestMapping("/login/{uname}")
     public String login(@PathVariable("uname") String uname, HttpServletRequest request){
+
         System.out.println("*****************************");
         User user=userService.ckeckexit(uname);
         if (user.getUserprofile()==null){
@@ -128,6 +188,41 @@ public class UserController {
             user.setUserimage("huge2.jpeg");
         }
         System.out.println("login:  "+uname);
+        List<Article> tuijian=articleService.findRecommend();
+        System.out.println(tuijian);
+        int count1=1;
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        for (Article a:tuijian
+                ) {
+            User user1=userService.findByUid(a.getUid());
+            String content = contentAlert(a.getArcontent());
+            a.setArcontent(content);
+            System.out.println(a);
+            System.out.println(user1);
+            String date=simpleDateFormat.format(a.getArcreatetime());
+            if(a.getCaid()==1) request.getSession().setAttribute(("RecommendImg"+count1),"java.jpg");
+            else if(a.getCaid()==2) request.getSession().setAttribute(("RecommendImg"+count1),"C.jpg");
+            else if(a.getCaid()==3) request.getSession().setAttribute(("RecommendImg"+count1),"js.jpg");
+            else if(a.getCaid()==4) request.getSession().setAttribute(("RecommendImg"+count1),"php.jpg");
+            else if(a.getCaid()==5) request.getSession().setAttribute(("RecommendImg"+count1),"suanfa.jpg");
+            else if(a.getCaid()==6) request.getSession().setAttribute(("RecommendImg"+count1),"sjjg.jpg");
+            else if(a.getCaid()==7) request.getSession().setAttribute(("RecommendImg"+count1),"czxt.jpg");
+            else if(a.getCaid()==8) request.getSession().setAttribute(("RecommendImg"+count1),"jsjwl.jpg");
+            request.getSession().setAttribute(("RecommendDate"+count1),date);
+            request.getSession().setAttribute(("RecommendArticle"+count1),a);
+            request.getSession().setAttribute(("RecommendUser"+count1),user1);
+            count1++;
+        }
+        List<Article> top3=articleService.findtop3();
+
+        int count=1;
+        for (Article a:top3
+             ) {
+            User user1=userService.findByUid(a.getUid());
+            System.out.println(user1);
+            request.getSession().setAttribute(("top"+count),user1);
+            count++;
+        }
         request.getSession().setAttribute("user",user);
         return "main";
     }
@@ -147,6 +242,14 @@ public class UserController {
         else {
             map.put("check",0);
         }
+        return map;
+    }
+    @RequestMapping(value = "tuichu",method = RequestMethod.POST)
+    public  @ResponseBody
+    Map<String,Object> tuichu(HttpServletRequest request){
+        System.out.println(123);
+        Map<String,Object> map=new HashMap<>();
+        request.getSession().removeAttribute("user");
         return map;
     }
     @RequestMapping(value = "checkpasswordexit",method = RequestMethod.POST)

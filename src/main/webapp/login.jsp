@@ -275,6 +275,7 @@
     });
     function photoregist() {
         var imgData=document.getElementById("canvas2").toDataURL("image/png");
+
         var data2=imgData.substr(22);
         debugger;
         console.log(data2);

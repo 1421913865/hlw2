@@ -105,4 +105,72 @@ public class ArticleServiceImpl implements ArticleService{
         return articleDao.queryArticleListByUidCaid(uid, caid);
     }
 
+    @Override
+    public List<Article> queryArticleListByCaid(int caid) {
+        return articleDao.queryArticleListByCaid(caid);
+    }
+
+    @Override
+    public List<Article> queryArticleListByCaidLimit3(int caid) {
+        return articleDao.queryArticleListByCaidLimit3(caid);
+    }
+
+    @Override
+    public List<Article> findtop3() {
+        return articleDao.findtop3();
+    }
+
+    @Override
+    public List<Article> findRecommend() {
+        return articleDao.findRecommend();
+    }
+
+    @Override
+    public List<Article> queryArticleList2(String artitle) {
+        return articleDao.queryArticleList2(artitle);
+    }
+
+
+    @Override
+    public int queryPriorityByUid(int uid) {
+        return articleDao.queryPriorityByUid(uid);
+    }
+
+    @Override
+    public void updatePublicByArid(int arid) {
+        articleDao.updatePublicByArid(arid);
+    }
+
+    @Override
+    public List<Article> queryArticleListByUidDraft(int uid) {
+        return articleDao.queryArticleListByUidDraft(uid);
+    }
+
+    @Override
+    public void updateArticleDraftByArid(int arid) {
+        articleDao.updateArticleDraftByArid(arid);
+    }
+
+    @Override
+    public void deleteArticleByArid(int arid) {
+        articleDao.deleteArticleByArid(arid);
+    }
+    @Override
+    public List<Article> queryArticleListByUidPublic(int uid) {
+        return articleDao.queryArticleListByUidPublic(uid);
+    }
+
+    @Override
+    public List<Article> queryArticleListByUidPrivate(int uid) {
+        List<Article> articleList = articleDao.queryArticleListByUId(uid);
+        for(int i = articleList.size()-1;i >= 0;i--){
+            Article article = articleList.get(i);
+            if(article.getArispublic() == 1 || article.getArisdraft() == 0){
+                articleList.remove(i);
+            }
+        }
+        return articleList;
+    }
+
+
 }

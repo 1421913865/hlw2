@@ -52,7 +52,7 @@ public class UserLoginController {
 
             System.out.println(score);
 
-            if (score>=80)
+            if (score>=70)
             {
                 map.put("msg",1);
                 map.put("username",user.getUname());

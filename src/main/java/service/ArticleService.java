@@ -25,4 +25,17 @@ public interface ArticleService {
     List<Article> queryArticleListByUidUpdateTime(int uid);
     List<Category> queryCategoryListByUid(int uid);
     List<Article> queryArticleListByUidCaid(int uid, int caid);
+    public List<Article> queryArticleListByCaid(int caid);
+    List<Article> queryArticleListByCaidLimit3(int caid);
+    public List<Article> findtop3();
+    public List<Article> findRecommend();
+    public List<Article> queryArticleList2(String artitle);
+
+    int queryPriorityByUid(int uid);
+    void updatePublicByArid(int arid);
+    List<Article> queryArticleListByUidDraft(int uid);
+    void updateArticleDraftByArid(int arid);
+    void deleteArticleByArid(int arid);
+    List<Article> queryArticleListByUidPublic(int uid);
+    List<Article> queryArticleListByUidPrivate(int uid);
 }
